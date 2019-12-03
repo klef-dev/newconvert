@@ -2,7 +2,7 @@ module.exports = {
   devServer: {
     proxy: {
       "/api": {
-        target: "http://127.0.0.1:3333"
+        target: "http://196.13.111.60:8080"
       },
       "/student": {
         target: "https://core.lmu.edu.ng:4846/api"

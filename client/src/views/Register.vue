@@ -100,16 +100,16 @@
 </template>
 <script>
 import { mapState, mapMutations, mapActions, mapGetters } from "vuex";
-import router from '../router';
+// import router from '../router';
 export default {
-  mounted() {
-    if(!this.isLoggedIn) {
-      return router.push("/login")
-    }
-    if(this.user[0].unit != "Hospitality") {
-      return router.push("/dashboard")
-    }
-  },
+  // mounted() {
+  //   if(!this.isLoggedIn) {
+  //     return router.push("/login")
+  //   }
+  //   if(this.user[0].unit != "Hospitality") {
+  //     return router.push("/dashboard")
+  //   }
+  // },
   computed: {
     ...mapState("authentication", [
       "user",
