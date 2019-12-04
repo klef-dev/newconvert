@@ -37,63 +37,66 @@ export default {
       }
     },
 
-    create({ commit, state }) {
-      return instance
-        .get(`https://cors-anywhere.herokuapp.com/https://core.lmu.edu.ng:4846/api/student/${state.reg_no}`)
-        .then(({ data }) => {
-          if (data == null) {
-            iziToast.error({
-              title: "Something is not right",
-              position: "topRight",
-              timeout: 10000,
-              message: "This reg no is not registered with landmark"
-            });
-          } else {
-            const { fullname, email, programme, hall, room } = data;
-            let check = confirm(
-              `Are this details correct: ${fullname}, ${state.reg_no}, ${programme}`
-            );
-            if (check) {
-              return instance
-                .post("/api/v1/convert", {
-                  name: fullname,
-                  reg_no: state.reg_no,
-                  webmail: email,
-                  programme,
-                  hall,
-                  room,
-                  spiritual: state.spiritual,
-                  holy: state.holy,
-                  water: state.water
-                })
-                .then(({ data }) => {
-                  if (data.error) {
-                    iziToast.error({
-                      title: "Something happened",
-                      position: "topRight",
-                      timeout: 10000,
-                      message: data.msg
-                    });
-                  } else {
-                    commit("create", data);
-                    commit("setRegNo", null);
-                    iziToast.success({
-                      title: "Good job",
-                      position: "topRight",
-                      timeout: 10000,
-                      message: `${fullname} is now born again`
-                    });
-                  }
-                })
-                .catch(error => {
-                  errorHandler(error, "Converting error");
-                });
-            }
+    async create({ commit, state }) {
+      try {
+        NProgress.start();
+        const { data } = await axios.get(
+          `https://core.lmu.edu.ng:4846/api/student/${state.reg_no}`
+        );
+        if (data == null) {
+          NProgress.done();
+          iziToast.error({
+            title: "Something is not right",
+            position: "topRight",
+            timeout: 10000,
+            message: "This reg no is not registered with landmark"
+          });
+        } else {
+          const { fullname, email, programme, hall, room } = data;
+          let check = confirm(
+            `Are this details correct: ${fullname}, ${state.reg_no}, ${programme}`
+          );
+          if (check) {
+            return instance
+              .post("/api/v1/convert", {
+                name: fullname,
+                reg_no: state.reg_no,
+                webmail: email,
+                programme,
+                hall,
+                room,
+                spiritual: state.spiritual,
+                holy: state.holy,
+                water: state.water
+              })
+              .then(({ data: data_1 }) => {
+                if (data_1.error) {
+                  iziToast.error({
+                    title: "Something happened",
+                    position: "topRight",
+                    timeout: 10000,
+                    message: data_1.msg
+                  });
+                } else {
+                  commit("create", data_1);
+                  commit("setRegNo", null);
+                  iziToast.success({
+                    title: "Good job",
+                    position: "topRight",
+                    timeout: 10000,
+                    message: `${fullname} is now born again`
+                  });
+                }
+              })
+              .catch(error => {
+                errorHandler(error, "Converting error");
+              });
           }
-        })
-        .catch(error => {
-          errorHandler(error, "Lmu error");
-        });
+        }
+      } catch (error_1) {
+        NProgress.done();
+        errorHandler(error_1, "Lmu error");
+      }
     },
 
     // Get total number of new converts
@@ -248,7 +251,8 @@ export default {
             message: data.msg
           });
         } else {
-          let point = state.totalConverts, final = (data.rededicated / point) * state.pcent;
+          let point = state.totalConverts,
+            final = (data.rededicated / point) * state.pcent;
           commit("setRededicated", final.toFixed());
         }
       } catch (error) {
@@ -267,13 +271,14 @@ export default {
             message: data.msg
           });
         } else {
-          let point = state.totalConverts, final = (data.newlyConverted / point) * state.pcent;
+          let point = state.totalConverts,
+            final = (data.newlyConverted / point) * state.pcent;
           commit("setNewlyConverted", final.toFixed());
         }
       } catch (error) {
         errorHandler(error, "Newly converted error");
       }
-    },
+    }
   },
   getters: {},
   mutations: {
