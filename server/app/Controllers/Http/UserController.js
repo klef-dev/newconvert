@@ -12,13 +12,7 @@ class UserController {
   }
 
   // Register a User
-  async register({ request, response, auth }) {
-    if (auth.unit != "Hospitality") {
-      return response.status(401).json({
-        msg: "Unauthorized access, can not perform this action",
-        error: true
-      });
-    }
+  async register({ request }) {
     const { webmail, unit, head, assistant, password } = request.all();
     const profilePic = request.file("file", {
       types: ["image"],

@@ -39,7 +39,7 @@ export default {
 
     create({ commit, state }) {
       return instance
-        .get(`/student/${state.reg_no}`)
+        .get(`https://core.lmu.edu.ng:4846/api/student/${state.reg_no}`)
         .then(({ data }) => {
           if (data == null) {
             iziToast.error({
